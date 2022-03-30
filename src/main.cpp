@@ -14,6 +14,7 @@
 #define ESC_CODE 27
 #define DEV_WIDTH 320
 #define SPACE " "
+#define LINE_FEED '\n'
 
 /**
  * @brief timestamp
@@ -27,7 +28,7 @@ std::string timestamp()
     tm *gmtm = gmtime(&now);
     dt = asctime(gmtm);
     std::string ts(dt);
-    ts.erase(std::remove(ts.begin(), ts.end(), '\n'), ts.end());
+    ts.erase(std::remove(ts.begin(), ts.end(), LINE_FEED), ts.end());
     return ts;
 }
 

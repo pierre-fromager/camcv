@@ -1,5 +1,5 @@
-    *.o
-    doc/html
-    callgrind.*
-    .~lock.*
-   build/*
+*.o
+doc/html
+callgrind.*
+.~lock.*
+build
