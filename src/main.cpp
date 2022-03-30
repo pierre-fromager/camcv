@@ -40,6 +40,17 @@ int diffCap(const cv::Mat m1, const cv::Mat m2)
     return cv::countNonZero(diff);
 }
 
+/**
+ * @brief action triggered when threshold overhead
+ * 
+ * @param msg 
+ * @param qntDiff 
+ */
+void action(std::string msg, int qntDiff)
+{
+    std::cout << timestamp() << SPACE << MOTION_DETECTED_LABEL << qntDiff << std::endl;
+}
+
 int main()
 {
     std::cout << MAIN_MSG << std::endl;
@@ -82,7 +93,7 @@ int main()
                     std::cout << timestamp() << SPACE << frames << SPACE << CAPTURE_LABEL << std::endl;
                 const int qntDiff = abs(diffPrev - diffValue);
                 if (qntDiff > TOLERANCE)
-                    std::cout << timestamp() << SPACE << MOTION_DETECTED_LABEL << qntDiff << std::endl;
+                    action(timestamp(), qntDiff);
                 capdev >> imgPrev;
             }
             else
