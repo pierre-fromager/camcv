@@ -6,8 +6,9 @@ Trigger action when diff ratio greater than acceptance.
 
 ## Requirements
 
-* Boost lib
-* OpenCV
+* Boost lib (v1.78.0)
+* OpenCV (v4)
+* C++ (v10.2.1)
 
 ## Going further
 * Look [there](https://github.com/cedricve/motion-detection) to implement zoning method

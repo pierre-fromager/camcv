@@ -20,10 +20,11 @@ add_definitions(
 )
 
 file(GLOB ${PROJECT_NAME}_sources 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
 )
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(/usr/include/opencv4)
 
 add_definitions (-DBOOST_TEST_DYN_LINK)

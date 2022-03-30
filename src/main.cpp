@@ -1,20 +1,5 @@
 
-#include <stdio.h>
-#include <string>
-#include <ctime>
-#include <opencv4/opencv2/opencv.hpp>
-
-#define DEBUG 0
-#define MAIN_MSG "Press ESC to exit"
-#define WINDOW_TITLE "Motion detect"
-#define ERR_MSG "Can't open device"
-#define CAP_DEVICE_ID 0
-#define POLLING_KEY_TIME 1
-#define POLLING_CAP_INTERVAL 10
-#define ESC_CODE 27
-#define DEV_WIDTH 320
-#define SPACE " "
-#define LINE_FEED '\n'
+#include <camcv/config.h>
 
 /**
  * @brief timestamp
@@ -84,14 +69,14 @@ int main()
             capdev >> img;
             // Display matrix on window frame
             cv::imshow(WINDOW_TITLE, img);
-            // Console out differences captures
             diffValue = diffCap(imgPrev, img);
+            // Console out differences captures
             if (DEBUG)
-                std::cout << timestamp() << SPACE << frames << SPACE << "D:" << diffValue << std::endl;
+                std::cout << timestamp() << SPACE << frames << SPACE << DIFF_WEIGHT_LABEL << diffValue << std::endl;
             if (frames % POLLING_CAP_INTERVAL == 0)
             {
                 if (DEBUG)
-                    std::cout << timestamp() << SPACE << frames << SPACE << "Capture" << std::endl;
+                    std::cout << timestamp() << SPACE << frames << SPACE << CAPTURE_LABEL << std::endl;
                 capdev >> imgPrev;
             }
             // Exit if ESC keypressed
