@@ -20,7 +20,7 @@
 #define LINE_FEED '\n'
 #define DIFF_WEIGHT_LABEL "Difs:"
 #define CAPTURE_LABEL "Capture"
-#define MOTION_DETECTED_LABEL "Motion detected:"
+#define MOTION_DETECTED_LABEL "MotionWeight:"
 #define TOLERANCE 1000
 
 #endif // CONFIG_H

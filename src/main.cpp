@@ -8,7 +8,7 @@
  */
 std::string timestamp()
 {
-    time_t now = time(0);
+    const time_t now = time(0);
     char *dt = ctime(&now);
     tm *gmtm = gmtime(&now);
     dt = asctime(gmtm);
@@ -42,9 +42,9 @@ int diffCap(const cv::Mat m1, const cv::Mat m2)
 
 /**
  * @brief action triggered when threshold overhead
- * 
- * @param msg 
- * @param qntDiff 
+ *
+ * @param msg
+ * @param qntDiff
  */
 void action(std::string msg, int qntDiff)
 {
@@ -86,7 +86,7 @@ int main()
             // Console out differences captures
             if (DEBUG)
                 std::cout << timestamp() << SPACE << frames << SPACE << DIFF_WEIGHT_LABEL << diffValue << std::endl;
-            // Check diff
+            // Check diff @interval
             if (frames % POLLING_CAP_INTERVAL == 0)
             {
                 if (DEBUG)
@@ -97,9 +97,7 @@ int main()
                 capdev >> imgPrev;
             }
             else
-            {
                 diffPrev = diffValue;
-            }
             // Exit if ESC keypressed
             const int kv = cv::waitKey(POLLING_KEY_TIME);
             if (kv == ESC_CODE)
