@@ -2,7 +2,7 @@
 #include <camcv/config.h>
 
 /**
- * @brief timestamp
+ * @brief returns day time
  *
  * @return std::string
  */
@@ -18,7 +18,7 @@ std::string timestamp()
 }
 
 /**
- * @brief compare 2 images and returns non zero diff amount
+ * @brief images comparator returns non zero diff amount
  *
  * @param m1 current captured image
  * @param m2 previous captured image
@@ -26,16 +26,16 @@ std::string timestamp()
  */
 int diffCap(const cv::Mat m1, const cv::Mat m2)
 {
-    cv::Mat m1g, m2g, diff;
     if (m1.empty() && m2.empty())
         return -1;
     if (m1.cols != m2.cols || m1.rows != m2.rows || m1.dims != m2.dims)
         return -2;
+    cv::Mat m1g, m2g, diff;
     // Converting captures to gray
     cv::cvtColor(m1, m1g, cv::COLOR_RGB2GRAY);
     cv::cvtColor(m2, m2g, cv::COLOR_RGB2GRAY);
     // Comparing
-    cv::compare(m1g, m2g, diff, cv::CMP_NE);
+    cv::compare(m1g, m2g, diff, cv::CMP_NE); // CMP_NE could be changed to whatever in CmpTypes
     // Amount of diffs
     return cv::countNonZero(diff);
 }
@@ -45,6 +45,7 @@ int main()
     std::cout << MAIN_MSG << std::endl;
     unsigned long int frames = 0;
     int diffValue = 0;
+    double diffPrev = 0;
     // Matrix
     cv::Mat img, imgPrev;
     // Window named
@@ -69,18 +70,28 @@ int main()
             capdev >> img;
             // Display matrix on window frame
             cv::imshow(WINDOW_TITLE, img);
+            // Calculate diff
             diffValue = diffCap(imgPrev, img);
             // Console out differences captures
             if (DEBUG)
                 std::cout << timestamp() << SPACE << frames << SPACE << DIFF_WEIGHT_LABEL << diffValue << std::endl;
+            // Check diff
             if (frames % POLLING_CAP_INTERVAL == 0)
             {
                 if (DEBUG)
                     std::cout << timestamp() << SPACE << frames << SPACE << CAPTURE_LABEL << std::endl;
+                const int qntDiff = abs(diffPrev - diffValue);
+                if (qntDiff > TOLERANCE)
+                    std::cout << timestamp() << SPACE << MOTION_DETECTED_LABEL << qntDiff << std::endl;
                 capdev >> imgPrev;
             }
+            else
+            {
+                diffPrev = diffValue;
+            }
             // Exit if ESC keypressed
-            if (cv::waitKey(POLLING_KEY_TIME) == ESC_CODE)
+            const int kv = cv::waitKey(POLLING_KEY_TIME);
+            if (kv == ESC_CODE)
                 break;
         }
     }

@@ -7,19 +7,20 @@
 #include <ctime>
 #include <opencv4/opencv2/opencv.hpp>
 
-#define DEBUG 1
+#define DEBUG 0
 #define MAIN_MSG "Press ESC to exit"
 #define WINDOW_TITLE "Motion detect"
 #define ERR_MSG "Can't open device"
 #define CAP_DEVICE_ID 0
 #define POLLING_KEY_TIME 1
-#define POLLING_CAP_INTERVAL 10
+#define POLLING_CAP_INTERVAL 2
 #define ESC_CODE 27
 #define DEV_WIDTH 320
 #define SPACE " "
 #define LINE_FEED '\n'
 #define DIFF_WEIGHT_LABEL "Difs:"
 #define CAPTURE_LABEL "Capture"
-#define PCT_TOLERANCE 10
+#define MOTION_DETECTED_LABEL "Motion detected:"
+#define TOLERANCE 1000
 
 #endif // CONFIG_H
