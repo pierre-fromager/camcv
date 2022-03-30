@@ -2,4 +2,4 @@
     doc/html
     callgrind.*
     .~lock.*
-    build
+   build/*
