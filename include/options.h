@@ -4,7 +4,7 @@
 #define CAP_DEVICE_ID 0
 #define DEV_WIDTH 320
 #define TOLERANCE 1000
-#define POLLING_CAP_INTERVAL 2
+#define POLLING_CAP_INTERVAL 20
 #define SAVE_IMG_ACTION 0
 
 enum verbosity_t

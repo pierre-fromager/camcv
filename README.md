@@ -60,6 +60,14 @@ Sample run options
 ```
 ./build/camcv --d 0 --t 1000 --w 320 --v 1 --i 2 --s 1
 ```
+In this case we :
+* use first video device (/dev/video0)
+* set threshold with 1000 as diff value from compare
+* set capture dimension to 320x240
+* enable verbosity as info
+* capture every 2 frames
+* choose to save image on motion detect
+
 ### Keys
 * 'm' toggle diff mode.
 

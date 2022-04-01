@@ -9,7 +9,8 @@
 #define MAIN_MSG "Press ESC to exit"
 #define WINDOW_TITLE "Motion detect"
 #define ERR_MSG "Can't open device"
-#define POLLING_KEY_TIME 1
+#define MOTIONAT_MSG "Motion@"
+#define POLLING_KEY_TIME 10
 #define ESC_CODE 27
 #define KEY_MODE 'm'
 #define SPACE " "

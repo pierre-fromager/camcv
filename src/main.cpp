@@ -53,11 +53,11 @@ static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff)
  */
 static void action(const cv::Mat img, cmd_options_t opts)
 {
+    const std::string ts = Tools::Timestamp::asNumber();
+    if (opts.verbosity == v_debug)
+        std::cout << MOTIONAT_MSG << ts << std::endl;
     if (opts.savimg)
-    {
-        const std::string filename = Tools::Timestamp::asNumber() + JPEG_EXT;
-        cv::imwrite(filename, img);
-    }
+        cv::imwrite(ts + JPEG_EXT, img);
 }
 
 int main(int argc, char **argv)
@@ -110,8 +110,7 @@ int main(int argc, char **argv)
             // check@interval
             if (frames % cmdopts.cintval == 0)
             {
-                const ui_t qntDiff = abs(diffPrev - diffValue);
-                if (qntDiff > cmdopts.threshold)
+                if (abs(diffPrev - diffValue) > cmdopts.threshold)
                     action(img, cmdopts);
                 capdev >> imgPrev;
             }
