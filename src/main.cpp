@@ -25,12 +25,12 @@ static void toGray(const cv::Mat m, cv::Mat &mGray)
 }
 
 /**
- * @brief compare current and previous cap and returns non zero diff
+ * @brief compare current and previous capture
  *
  * @param m1 current img
  * @param m2 previous img
  * @param diff diff img
- * @return int
+ * @return int non zero diff
  */
 static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff)
 {
@@ -49,15 +49,15 @@ static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff)
  * @brief trigger action when threshold outmoded
  *
  * @param img current capture
- * @param filename
- * @param msg debug msg
- * @param qntDiff diff amount
+ * @param opts options parser results
  */
-static void action(const cv::Mat img, std::string filename, std::string msg, int qntDiff, cmd_options_t opts)
+static void action(const cv::Mat img, cmd_options_t opts)
 {
-    std::cout << msg << qntDiff << std::endl;
     if (opts.savimg)
+    {
+        const std::string filename = Tools::Timestamp::asNumber() + JPEG_EXT;
         cv::imwrite(filename, img);
+    }
 }
 
 int main(int argc, char **argv)
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
             {
                 const ui_t qntDiff = abs(diffPrev - diffValue);
                 if (qntDiff > cmdopts.threshold)
-                    action(img, Tools::Timestamp::asNumber() + JPEG_EXT, tsDate + SMOTION_DETECTED_LABEL, qntDiff, cmdopts);
+                    action(img, cmdopts);
                 capdev >> imgPrev;
             }
             else

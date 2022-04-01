@@ -1,7 +1,7 @@
 # CamCV
 
-Motion detect on webcam using openCV.  
-Learning differences from previous and current image and trigger action when diff ratio greater than tolerance.  
+Motion detect on webcam.  
+Learn differences from previous and current image then trigger action when diff ratio greater than tolerance.  
 
 ## Requirements
 
@@ -27,7 +27,7 @@ sudo apt install cmake libboost-all-dev libopencv-dev
 ```
 
 ## Devices
-To identify devices use the snippet below
+Identify cam devices
 ``` 
 #!/bin/bash
 
@@ -40,11 +40,10 @@ done
 
 ## Usage
 
-Simply
 ``` 
 ./run.sh
 ```
-Or display help
+Display help
 ``` 
 ./build/camcv --help
 
@@ -55,17 +54,15 @@ Usage camcv [options]:
   --w arg               set width
   --v arg               set verbosity
   --i arg               set capture interval
+  --s arg               save image
 ```
-Sample options
+Sample run options
 ```
-./build/camcv --d 0 --t 1000 --w 320 --v 1 --i 100
+./build/camcv --d 0 --t 1000 --w 320 --v 1 --i 2 --s 1
 ```
 ### Keys
 * 'm' toggle diff mode.
 
-## Going further
-Look [there](https://github.com/cedricve/motion-detection) to implement zoning method
-
-## Todo
-
-* Implement zoning
+## Looking further
+* Zoning [there](https://github.com/cedricve/motion-detection)
+* [OpenCV](https://github.com/joachimBurket/esp32-opencv) on esp32
