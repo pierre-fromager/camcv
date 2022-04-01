@@ -5,14 +5,19 @@
 
 /**
  * @brief returns timestamp as date or number
- *
- * @return std::string
+ * 
+ * @param asNumber 
+ * @return std::string 
  */
 static std::string timestamp(bool asNumber = false)
 {
     return (asNumber) ? Tools::Timestamp::asNumber() : Tools::Timestamp::asDate();
 }
 
+/**
+ * @brief mouse handler
+ * 
+ */
 static void onMouse(int event, int x, int y, int /*flags*/, void * /*param*/)
 {
     if (event == cv::EVENT_LBUTTONDOWN)
@@ -20,7 +25,18 @@ static void onMouse(int event, int x, int y, int /*flags*/, void * /*param*/)
 }
 
 /**
- * @brief compare diff between current and previous img
+ * @brief convert cap to gray
+ * 
+ * @param m 
+ * @param mGray 
+ */
+static void toGray(const cv::Mat m, cv::Mat &mGray)
+{
+    cv::cvtColor(m, mGray, cv::COLOR_RGB2GRAY);
+}
+
+/**
+ * @brief compare current and previous cap and returns non zero diff
  *
  * @param m1 current img
  * @param m2 previous img
@@ -34,20 +50,19 @@ static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff)
     if (m1.cols != m2.cols || m1.rows != m2.rows || m1.dims != m2.dims)
         return -2;
     cv::Mat m1g, m2g;
-    // Converting captures to gray
-    cv::cvtColor(m1, m1g, cv::COLOR_RGB2GRAY);
-    cv::cvtColor(m2, m2g, cv::COLOR_RGB2GRAY);
-    // Comparing
+    toGray(m1, m1g);
+    toGray(m2, m2g);
     cv::compare(m1g, m2g, diff, cv::CMP_NE);
-    // Amount of diffs
     return cv::countNonZero(diff);
 }
 
 /**
- * @brief action triggered when threshold overhead
- *
- * @param msg
- * @param qntDiff
+ * @brief action triggered when compare threshold overhead
+ * 
+ * @param img 
+ * @param filename 
+ * @param msg 
+ * @param qntDiff 
  */
 static void action(const cv::Mat img, std::string filename, std::string msg, int qntDiff)
 {
@@ -79,21 +94,19 @@ int main(int argc, char **argv)
     }
     if (rcopt == EXIT_FAILURE)
         return 1;
-
     unsigned long int frames = 0;
     int diffValue, diffPrev = 0;
     bool diffMode = false;
-    // Matrix
+    // Matrices
     cv::Mat img, imgPrev, imgDiff;
-    // Window named
+    // Window properties
     cv::namedWindow(WINDOW_TITLE);
     cv::setMouseCallback(WINDOW_TITLE, onMouse, 0);
     // Set capture device
     cv::VideoCapture capdev(cmdopts.deviceId);
     // Set device width
     capdev.set(cv::CAP_PROP_FRAME_WIDTH, cmdopts.width);
-    // Error if cannot open device
-    if (!capdev.isOpened())
+    if (false == capdev.isOpened())
     {
         std::cout << ERR_MSG << std::endl;
         exit(EXIT_FAILURE);
@@ -115,7 +128,7 @@ int main(int argc, char **argv)
             if (cmdopts.verbosity == v_debug)
                 std::cout << ts << SPACE << frames << SPACE << DIFF_WEIGHT_LABEL << diffValue << std::endl;
             // Check diff @interval
-            if (frames % POLLING_CAP_INTERVAL == 0)
+            if (frames % cmdopts.cintval == 0)
             {
                 if (cmdopts.verbosity == v_debug)
                     std::cout << ts << SPACE << frames << SPACE << CAPTURE_LABEL << std::endl;

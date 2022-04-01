@@ -25,6 +25,8 @@
 #define CMD_OPT_W_HLP "set width"
 #define CMD_OPT_V "v"
 #define CMD_OPT_V_HLP "set verbosity"
+#define CMD_OPT_I "i"
+#define CMD_OPT_I_HLP "set capture interval"
 
 namespace bpo = boost::program_options;
 

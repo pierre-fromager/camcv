@@ -4,6 +4,7 @@
 #define CAP_DEVICE_ID 0
 #define DEV_WIDTH 320
 #define TOLERANCE 1000
+#define POLLING_CAP_INTERVAL 2
 
 enum verbosity_t
 {
@@ -18,8 +19,10 @@ typedef struct cmd_options_s
 {
     ui_t deviceId = CAP_DEVICE_ID;
     ui_t threshold = TOLERANCE;
+    ui_t cintval = POLLING_CAP_INTERVAL;
     ui_t width = DEV_WIDTH;
     ui_t verbosity = v_info;
+
 } cmd_options_t;
 
 #endif

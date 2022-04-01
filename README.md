@@ -44,7 +44,7 @@ Simply
 ``` 
 ./run.sh
 ```
-Or ask for help
+Or display help
 ``` 
 ./build/camcv --help
 
@@ -54,10 +54,11 @@ Usage camcv [options]:
   --t arg               set threshold
   --w arg               set width
   --v arg               set verbosity
+  --i arg               set capture interval
 ```
-With options
+Sample options
 ```
-./build/camcv --d 0 --t 1000 --w 320 --v 1
+./build/camcv --d 0 --t 1000 --w 320 --v 1 --i 100
 ```
 ### Keys
 * 'm' toggle diff mode.
