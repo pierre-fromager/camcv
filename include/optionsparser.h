@@ -27,6 +27,8 @@
 #define CMD_OPT_V_HLP "set verbosity"
 #define CMD_OPT_I "i"
 #define CMD_OPT_I_HLP "set capture interval"
+#define CMD_OPT_S "s"
+#define CMD_OPT_S_HLP "save image"
 
 namespace bpo = boost::program_options;
 

@@ -5,6 +5,7 @@
 #define DEV_WIDTH 320
 #define TOLERANCE 1000
 #define POLLING_CAP_INTERVAL 2
+#define SAVE_IMG_ACTION 0
 
 enum verbosity_t
 {
@@ -22,6 +23,7 @@ typedef struct cmd_options_s
     ui_t cintval = POLLING_CAP_INTERVAL;
     ui_t width = DEV_WIDTH;
     ui_t verbosity = v_info;
+    ui_t savimg = SAVE_IMG_ACTION;
 
 } cmd_options_t;
 

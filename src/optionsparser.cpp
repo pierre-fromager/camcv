@@ -20,6 +20,7 @@ ui_t OptionsParser::parse(cmd_options_t &cmdopts)
     desc.add_options()(CMD_OPT_W, bpo::value<int>(), CMD_OPT_W_HLP);
     desc.add_options()(CMD_OPT_V, bpo::value<int>(), CMD_OPT_V_HLP);
     desc.add_options()(CMD_OPT_I, bpo::value<int>(), CMD_OPT_I_HLP);
+    desc.add_options()(CMD_OPT_S, bpo::value<int>(), CMD_OPT_S_HLP);
     bpo::variables_map vm;
     bpo::store(bpo::parse_command_line(m_argc, m_argv, desc), vm);
     bpo::notify(vm);
@@ -38,6 +39,8 @@ ui_t OptionsParser::parse(cmd_options_t &cmdopts)
         cmdopts.verbosity = vm[CMD_OPT_V].as<int>();
     if (vm.count(CMD_OPT_I))
         cmdopts.cintval = vm[CMD_OPT_I].as<int>();
+    if (vm.count(CMD_OPT_S))
+        cmdopts.savimg = vm[CMD_OPT_S].as<int>();
     return EXIT_SUCCESS;
 }
 
@@ -48,5 +51,6 @@ void OptionsParser::debug(cmd_options_t &cmdopts)
               << " Width:" << cmdopts.width
               << " Verbosity:" << cmdopts.verbosity
               << " Interval:" << cmdopts.cintval
+              << " Save Img:" << cmdopts.savimg
               << std::endl;
 }

@@ -48,15 +48,16 @@ static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff)
 /**
  * @brief trigger action when threshold outmoded
  *
- * @param img
+ * @param img current capture
  * @param filename
- * @param msg
- * @param qntDiff
+ * @param msg debug msg
+ * @param qntDiff diff amount
  */
-static void action(const cv::Mat img, std::string filename, std::string msg, int qntDiff)
+static void action(const cv::Mat img, std::string filename, std::string msg, int qntDiff, cmd_options_t opts)
 {
     std::cout << msg << qntDiff << std::endl;
-    cv::imwrite(filename, img);
+    if (opts.savimg)
+        cv::imwrite(filename, img);
 }
 
 int main(int argc, char **argv)
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     if (rcopt == EXIT_FAILURE)
-        return 1;
+        return EXIT_FAILURE;
     unsigned long int frames = 0;
     int diffValue, diffPrev = 0;
     bool diffMode = false;
@@ -106,12 +107,12 @@ int main(int argc, char **argv)
             // Debug compare
             if (cmdopts.verbosity == v_debug)
                 std::cout << tsDate << SPACE << frames << SPACE << DIFF_WEIGHT_LABEL << diffValue << std::endl;
-            // Check compare@interval
+            // check@interval
             if (frames % cmdopts.cintval == 0)
             {
                 const ui_t qntDiff = abs(diffPrev - diffValue);
                 if (qntDiff > cmdopts.threshold)
-                    action(img, Tools::Timestamp::asNumber() + JPEG_EXT, tsDate + SMOTION_DETECTED_LABEL, qntDiff);
+                    action(img, Tools::Timestamp::asNumber() + JPEG_EXT, tsDate + SMOTION_DETECTED_LABEL, qntDiff, cmdopts);
                 capdev >> imgPrev;
             }
             else

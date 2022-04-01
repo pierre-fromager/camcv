@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <string>
-#include <ctime>
 #include <opencv4/opencv2/opencv.hpp>
 
 #define MAIN_MSG "Press ESC to exit"
