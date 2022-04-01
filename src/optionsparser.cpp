@@ -40,3 +40,13 @@ ui_t OptionsParser::parse(cmd_options_t &cmdopts)
         cmdopts.cintval = vm[CMD_OPT_I].as<int>();
     return EXIT_SUCCESS;
 }
+
+void OptionsParser::debug(cmd_options_t &cmdopts)
+{
+    std::cout << " DeviceId:" << cmdopts.deviceId
+              << " Threshold:" << cmdopts.threshold
+              << " Width:" << cmdopts.width
+              << " Verbosity:" << cmdopts.verbosity
+              << " Interval:" << cmdopts.cintval
+              << std::endl;
+}

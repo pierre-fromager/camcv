@@ -36,6 +36,7 @@ public:
     explicit OptionsParser(int argc, char **argv);
     ~OptionsParser();
     ui_t parse(cmd_options_t &cmdopts);
+    void debug(cmd_options_t &cmdopts);
 
 private:
     int m_argc;

@@ -16,6 +16,7 @@
 #define SPACE " "
 #define JPEG_EXT ".jpg"
 #define DIFF_WEIGHT_LABEL "Difs:"
+#define MOUSE_EVENT "Mouse event "
 #define CAPTURE_LABEL "Capture"
 #define MOTION_DETECTED_LABEL "MotionWeight:"
 #define SMOTION_DETECTED_LABEL SPACE MOTION_DETECTED_LABEL

@@ -4,31 +4,20 @@
 #include <tools/timestamp.h>
 
 /**
- * @brief returns timestamp as date or number
- * 
- * @param asNumber 
- * @return std::string 
- */
-static std::string timestamp(bool asNumber = false)
-{
-    return (asNumber) ? Tools::Timestamp::asNumber() : Tools::Timestamp::asDate();
-}
-
-/**
  * @brief mouse handler
- * 
+ *
  */
 static void onMouse(int event, int x, int y, int /*flags*/, void * /*param*/)
 {
     if (event == cv::EVENT_LBUTTONDOWN)
-        std::cout << "Mouse clicked (" << x << "," << y << ")" << std::endl;
+        std::cout << MOUSE_EVENT << "(" << x << "," << y << ")" << std::endl;
 }
 
 /**
  * @brief convert cap to gray
- * 
- * @param m 
- * @param mGray 
+ *
+ * @param m
+ * @param mGray
  */
 static void toGray(const cv::Mat m, cv::Mat &mGray)
 {
@@ -57,12 +46,12 @@ static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff)
 }
 
 /**
- * @brief action triggered when compare threshold overhead
- * 
- * @param img 
- * @param filename 
- * @param msg 
- * @param qntDiff 
+ * @brief trigger action when threshold outmoded
+ *
+ * @param img
+ * @param filename
+ * @param msg
+ * @param qntDiff
  */
 static void action(const cv::Mat img, std::string filename, std::string msg, int qntDiff)
 {
@@ -79,12 +68,7 @@ int main(int argc, char **argv)
         auto *op = new OptionsParser(argc, argv);
         rcopt = op->parse(cmdopts);
         if (cmdopts.verbosity == v_debug)
-            std::cout << MAIN_MSG
-                      << " DeviceId:" << cmdopts.deviceId
-                      << " Threshold:" << cmdopts.threshold
-                      << " Width:" << cmdopts.width
-                      << " Verbosity:" << cmdopts.verbosity
-                      << std::endl;
+            op->debug(cmdopts);
         delete op;
     }
     catch (const bpo::error &ex)
@@ -97,19 +81,17 @@ int main(int argc, char **argv)
     unsigned long int frames = 0;
     int diffValue, diffPrev = 0;
     bool diffMode = false;
-    // Matrices
-    cv::Mat img, imgPrev, imgDiff;
+    cv::Mat img, imgPrev, imgDiff; // Matrices
     // Window properties
     cv::namedWindow(WINDOW_TITLE);
     cv::setMouseCallback(WINDOW_TITLE, onMouse, 0);
-    // Set capture device
+    // Capture properties
     cv::VideoCapture capdev(cmdopts.deviceId);
-    // Set device width
     capdev.set(cv::CAP_PROP_FRAME_WIDTH, cmdopts.width);
     if (false == capdev.isOpened())
     {
         std::cout << ERR_MSG << std::endl;
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
     else
     {
@@ -117,24 +99,19 @@ int main(int argc, char **argv)
         while (capdev.isOpened())
         {
             frames++;
-            // Copy capture image to matrix
-            capdev >> img;
-            // compare captures
-            diffValue = compare(imgPrev, img, imgDiff);
-            // Display matrix on window frame
-            cv::imshow(WINDOW_TITLE, (diffMode) ? imgDiff : img);
-            // Console out differences captures
-            const std::string ts = timestamp();
+            capdev >> img;                                         // Capture image
+            diffValue = compare(imgPrev, img, imgDiff);            // Compare captures
+            cv::imshow(WINDOW_TITLE, (diffMode) ? imgDiff : img);  // Display UI
+            const std::string tsDate = Tools::Timestamp::asDate(); // Timestamp as date
+            // Debug compare
             if (cmdopts.verbosity == v_debug)
-                std::cout << ts << SPACE << frames << SPACE << DIFF_WEIGHT_LABEL << diffValue << std::endl;
-            // Check diff @interval
+                std::cout << tsDate << SPACE << frames << SPACE << DIFF_WEIGHT_LABEL << diffValue << std::endl;
+            // Check compare@interval
             if (frames % cmdopts.cintval == 0)
             {
-                if (cmdopts.verbosity == v_debug)
-                    std::cout << ts << SPACE << frames << SPACE << CAPTURE_LABEL << std::endl;
                 const ui_t qntDiff = abs(diffPrev - diffValue);
                 if (qntDiff > cmdopts.threshold)
-                    action(img, timestamp(true) + JPEG_EXT, ts + SMOTION_DETECTED_LABEL, qntDiff);
+                    action(img, Tools::Timestamp::asNumber() + JPEG_EXT, tsDate + SMOTION_DETECTED_LABEL, qntDiff);
                 capdev >> imgPrev;
             }
             else
