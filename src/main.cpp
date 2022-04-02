@@ -5,14 +5,15 @@
 
 /**
  * @brief init gui
- * 
+ *
  * @param cmdopts options
  */
 static void initGui(cmd_options_t &cmdopts)
 {
     cv::namedWindow(WINDOW_TITLE);
-    cv::createTrackbar(TKB_TYPES, WINDOW_TITLE, &cmdopts.filter_type, FILTER_MAX_TYPE);
-    cv::createTrackbar(TKB_VALUE, WINDOW_TITLE, &cmdopts.filter_value, FILTER_MAX_VALUE);
+    cv::createTrackbar(CTRL_FILTER_TYPE, WINDOW_TITLE, &cmdopts.filter_type, FILTER_MAX_TYPE);
+    cv::createTrackbar(CTRL_FILTER_VALUE, WINDOW_TITLE, &cmdopts.filter_value, FILTER_MAX_VALUE);
+    cv::createTrackbar(CTRL_TRESHOLD, WINDOW_TITLE, &cmdopts.threshold, TRESHOLD_MAX_VALUE);
 }
 
 /**
@@ -38,10 +39,7 @@ static void toFilter(const cv::Mat m, cv::Mat &mFilter, cmd_options_t opts)
     cv::threshold(m, mFilter, opts.filter_value, FILTER_MAX_VALUE, opts.filter_type);
 }
 
-/**
- * @brief compare current and previous capture
- *
- * @param m1 current img
+/**TKB_VALUE
  * @param m2 previous img
  * @param diff diff img
  * @param opts options
@@ -78,7 +76,7 @@ static void action(const cv::Mat img, int deltaDiff, int frames, cmd_options_t o
 {
     const std::string ts = Tools::Timestamp::asNumber();
     if (opts.verbosity <= v_info)
-        std::cout << MOTIONAT_MSG << ts << ":" << deltaDiff << std::endl;
+        std::cout << MOTIONAT_MSG << ts << "@" << frames << ":" << deltaDiff << std::endl;
     if (opts.savimg)
     {
         char filename[21];
@@ -131,12 +129,10 @@ int main(int argc, char **argv)
             diffValue = compare(imgPrev, img, imgDiff, cmdopts); // Compare captures
             if (cmdopts.gui)                                     // Display GUI img
                 cv::imshow(WINDOW_TITLE, (diffMode) ? imgDiff : img);
-            const std::string tsDate = Tools::Timestamp::asDate(); // Timestamp as date
-            // check@interval
-            if (frames % cmdopts.cintval == 0)
+            if (frames % cmdopts.cintval == 0) // check diff
             {
                 const int deltaDiff = abs(diffPrev - diffValue);
-                if ((ui_t)deltaDiff > cmdopts.threshold)
+                if (deltaDiff > cmdopts.threshold)
                     action(img, deltaDiff, frames, cmdopts);
                 capdev >> imgPrev;
             }

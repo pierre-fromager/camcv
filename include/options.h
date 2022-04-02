@@ -23,7 +23,7 @@ typedef unsigned long int uli_t;
 typedef struct cmd_options_s
 {
     ui_t deviceId = CAP_DEVICE_ID;
-    ui_t threshold = TOLERANCE;
+    int threshold = TOLERANCE;
     ui_t cintval = POLLING_CAP_INTERVAL;
     ui_t width = DEV_WIDTH;
     ui_t verbosity = v_info;

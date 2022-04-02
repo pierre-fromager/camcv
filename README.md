@@ -74,8 +74,10 @@ In this case we :
 * capture every 2 frames
 * save image on motion detect
 
-### Keys
-* 'm' toggle diff mode.
+### Gui
+* 'm' toggle diff/real mode.
+* Filter type [0..4] (Binary, Binary Inverted, Truncate, To Zero, Zero Inverted)
+* Filter value
 
 ## Perfomances
 
