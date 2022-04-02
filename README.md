@@ -60,6 +60,7 @@ Usage camcv [options]:
   --s arg               save image
   --ft arg              filter type
   --fv arg              filter value
+  --gui arg             use GUI
 ```
 Sample run options
 ```
@@ -75,6 +76,16 @@ In this case we :
 
 ### Keys
 * 'm' toggle diff mode.
+
+## Perfomances
+
+Check Cpu load
+```
+top -c -p $(pgrep -d',' -f camcv)
+```
+
+* On i5-3320M, 320x240, filter activated, load is 2.7% per instance
+* Consider file saving as greedy
 
 ## Looking further
 * Zoning [there](https://github.com/cedricve/motion-detection)

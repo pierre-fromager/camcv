@@ -33,6 +33,8 @@
 #define CMD_OPT_FT_HLP "filter type"
 #define CMD_OPT_FV "fv"
 #define CMD_OPT_FV_HLP "filter value"
+#define CMD_OPT_GUI "gui"
+#define CMD_OPT_GUI_HLP "use GUI"
 
 namespace bpo = boost::program_options;
 

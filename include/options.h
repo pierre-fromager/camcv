@@ -8,6 +8,7 @@
 #define SAVE_IMG_ACTION 0
 #define FILTER_TYPE 0
 #define FILTER_VALUE 0
+#define USE_GUI 1
 
 enum verbosity_t
 {
@@ -18,6 +19,7 @@ enum verbosity_t
 };
 
 typedef unsigned int ui_t;
+typedef unsigned long int uli_t;
 typedef struct cmd_options_s
 {
     ui_t deviceId = CAP_DEVICE_ID;
@@ -28,6 +30,7 @@ typedef struct cmd_options_s
     ui_t savimg = SAVE_IMG_ACTION;
     int filter_type = FILTER_TYPE;
     int filter_value = FILTER_VALUE;
+    ui_t gui = USE_GUI;
 } cmd_options_t;
 
 #endif

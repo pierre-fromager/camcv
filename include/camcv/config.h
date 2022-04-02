@@ -24,5 +24,6 @@
 #define TKB_VALUE "Value"
 #define FILTER_MAX_TYPE 4
 #define FILTER_MAX_VALUE 255
+#define MAX_FRAMES 99
 
 #endif // CONFIG_H

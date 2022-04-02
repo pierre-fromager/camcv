@@ -3,17 +3,16 @@
 #include <optionsparser.h>
 #include <tools/timestamp.h>
 
-int threshold_value = 0;
-int threshold_type = 3;
-
 /**
- * @brief mouse handler
- *
+ * @brief init gui
+ * 
+ * @param cmdopts options
  */
-static void onMouse(int event, int x, int y, int /*flags*/, void * /*param*/)
+static void initGui(cmd_options_t cmdopts)
 {
-    if (event == cv::EVENT_LBUTTONDOWN)
-        std::cout << MOUSE_EVENT << "(" << x << "," << y << ")" << std::endl;
+    cv::namedWindow(WINDOW_TITLE);
+    cv::createTrackbar(TKB_TYPES, WINDOW_TITLE, &cmdopts.filter_type, FILTER_MAX_TYPE);
+    cv::createTrackbar(TKB_VALUE, WINDOW_TITLE, &cmdopts.filter_value, FILTER_MAX_VALUE);
 }
 
 /**
@@ -54,11 +53,12 @@ static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff, cmd_option
         return -1;
     if (m1.cols != m2.cols || m1.rows != m2.rows || m1.dims != m2.dims)
         return -2;
-    cv::Mat m1g, m2g, m1b, m2b;
+    cv::Mat m1g, m2g;
     toGray(m1, m1g);
     toGray(m2, m2g);
     if (opts.filter_type + opts.filter_value != 0)
     {
+        cv::Mat m1b, m2b;
         toFilter(m1g, m1b, opts);
         toFilter(m2g, m2b, opts);
         cv::compare(m1b, m2b, diff, cv::CMP_NE);
@@ -74,13 +74,17 @@ static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff, cmd_option
  * @param img current capture
  * @param opts options parser results
  */
-static void action(const cv::Mat img, cmd_options_t opts)
+static void action(const cv::Mat img, int deltaDiff, int frames, cmd_options_t opts)
 {
     const std::string ts = Tools::Timestamp::asNumber();
-    if (opts.verbosity == v_debug)
-        std::cout << MOTIONAT_MSG << ts << std::endl;
+    if (opts.verbosity <= v_info)
+        std::cout << MOTIONAT_MSG << ts << ":" << deltaDiff << std::endl;
     if (opts.savimg)
-        cv::imwrite(ts + JPEG_EXT, img);
+    {
+        char filename[21];
+        sprintf(filename, "%s%02d%s", ts.c_str(), frames, JPEG_EXT);
+        cv::imwrite(filename, img);
+    }
 }
 
 int main(int argc, char **argv)
@@ -102,15 +106,12 @@ int main(int argc, char **argv)
     }
     if (rcopt == EXIT_FAILURE)
         return EXIT_FAILURE;
-    unsigned long int frames = 0;
+    int frames = 0;
     int diffValue, diffPrev = 0;
     bool diffMode = false;
     cv::Mat img, imgPrev, imgDiff; // Matrices
-    // Window properties
-    cv::namedWindow(WINDOW_TITLE);
-    cv::setMouseCallback(WINDOW_TITLE, onMouse, 0);
-    cv::createTrackbar(TKB_TYPES, WINDOW_TITLE, &cmdopts.filter_type, FILTER_MAX_TYPE);
-    cv::createTrackbar(TKB_VALUE, WINDOW_TITLE, &cmdopts.filter_value, FILTER_MAX_VALUE);
+    if (cmdopts.gui)               // Gui properties
+        initGui(cmdopts);
     cv::VideoCapture capdev(cmdopts.deviceId);
     capdev.set(cv::CAP_PROP_FRAME_WIDTH, cmdopts.width);
     if (false == capdev.isOpened())
@@ -124,31 +125,34 @@ int main(int argc, char **argv)
         while (capdev.isOpened())
         {
             frames++;
-            capdev >> img;                                         // Capture image
-            diffValue = compare(imgPrev, img, imgDiff, cmdopts);   // Compare captures
-            cv::imshow(WINDOW_TITLE, (diffMode) ? imgDiff : img);  // Display UI
+            if (frames > MAX_FRAMES)
+                frames = 0;
+            capdev >> img;                                       // Capture image
+            diffValue = compare(imgPrev, img, imgDiff, cmdopts); // Compare captures
+            if (cmdopts.gui)                                     // Display GUI img
+                cv::imshow(WINDOW_TITLE, (diffMode) ? imgDiff : img);
             const std::string tsDate = Tools::Timestamp::asDate(); // Timestamp as date
-            // Debug compare
-            if (cmdopts.verbosity == v_debug)
-                std::cout << tsDate << SPACE << frames << SPACE << DIFF_WEIGHT_LABEL << diffValue << std::endl;
             // check@interval
             if (frames % cmdopts.cintval == 0)
             {
-                if (abs(diffPrev - diffValue) > cmdopts.threshold)
-                    action(img, cmdopts);
+                const int deltaDiff = abs(diffPrev - diffValue);
+                if ((ui_t)deltaDiff > cmdopts.threshold)
+                    action(img, deltaDiff, frames, cmdopts);
                 capdev >> imgPrev;
             }
             else
                 diffPrev = diffValue;
-            // Keys management
-            const int kv = cv::waitKey(POLLING_KEY_TIME);
-            if (kv == ESC_CODE)
-                break;
-            switch (kv)
+            if (cmdopts.gui) // Keys management
             {
-            case KEY_MODE:
-                diffMode = !diffMode;
-                break;
+                const int kv = cv::waitKey(POLLING_KEY_TIME);
+                if (kv == ESC_CODE)
+                    break;
+                switch (kv)
+                {
+                case KEY_MODE:
+                    diffMode = !diffMode;
+                    break;
+                }
             }
         }
     }

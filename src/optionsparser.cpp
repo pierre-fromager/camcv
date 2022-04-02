@@ -23,6 +23,7 @@ ui_t OptionsParser::parse(cmd_options_t &cmdopts)
     desc.add_options()(CMD_OPT_S, bpo::value<int>(), CMD_OPT_S_HLP);
     desc.add_options()(CMD_OPT_FT, bpo::value<int>(), CMD_OPT_FT_HLP);
     desc.add_options()(CMD_OPT_FV, bpo::value<int>(), CMD_OPT_FV_HLP);
+    desc.add_options()(CMD_OPT_GUI, bpo::value<int>(), CMD_OPT_GUI_HLP);
     bpo::variables_map vm;
     bpo::store(bpo::parse_command_line(m_argc, m_argv, desc), vm);
     bpo::notify(vm);
@@ -46,7 +47,9 @@ ui_t OptionsParser::parse(cmd_options_t &cmdopts)
     if (vm.count(CMD_OPT_FT))
         cmdopts.filter_type = vm[CMD_OPT_FT].as<int>();
     if (vm.count(CMD_OPT_FV))
-        cmdopts.filter_value = vm[CMD_OPT_FV].as<int>();    
+        cmdopts.filter_value = vm[CMD_OPT_FV].as<int>();
+    if (vm.count(CMD_OPT_GUI))
+        cmdopts.gui = vm[CMD_OPT_GUI].as<int>();
     return EXIT_SUCCESS;
 }
 
@@ -60,5 +63,6 @@ void OptionsParser::debug(cmd_options_t &cmdopts)
               << " Save Img:" << cmdopts.savimg
               << " Filter type:" << cmdopts.filter_type
               << " Filter value:" << cmdopts.filter_value
+              << " Use GUI:" << cmdopts.gui
               << std::endl;
 }
