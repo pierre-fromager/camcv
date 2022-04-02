@@ -3,6 +3,9 @@
 #include <optionsparser.h>
 #include <tools/timestamp.h>
 
+int threshold_value = 0;
+int threshold_type = 3;
+
 /**
  * @brief mouse handler
  *
@@ -16,12 +19,24 @@ static void onMouse(int event, int x, int y, int /*flags*/, void * /*param*/)
 /**
  * @brief convert cap to gray
  *
- * @param m
- * @param mGray
+ * @param m initial
+ * @param mGray grayed
  */
 static void toGray(const cv::Mat m, cv::Mat &mGray)
 {
     cv::cvtColor(m, mGray, cv::COLOR_RGB2GRAY);
+}
+
+/**
+ * @brief filter
+ *
+ * @param m initial
+ * @param mFilter filtered
+ * @param opts
+ */
+static void toFilter(const cv::Mat m, cv::Mat &mFilter, cmd_options_t opts)
+{
+    cv::threshold(m, mFilter, opts.filter_value, FILTER_MAX_VALUE, opts.filter_type);
 }
 
 /**
@@ -30,18 +45,26 @@ static void toGray(const cv::Mat m, cv::Mat &mGray)
  * @param m1 current img
  * @param m2 previous img
  * @param diff diff img
+ * @param opts options
  * @return int non zero diff
  */
-static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff)
+static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff, cmd_options_t opts)
 {
     if (m1.empty() && m2.empty())
         return -1;
     if (m1.cols != m2.cols || m1.rows != m2.rows || m1.dims != m2.dims)
         return -2;
-    cv::Mat m1g, m2g;
+    cv::Mat m1g, m2g, m1b, m2b;
     toGray(m1, m1g);
     toGray(m2, m2g);
-    cv::compare(m1g, m2g, diff, cv::CMP_NE);
+    if (opts.filter_type + opts.filter_value != 0)
+    {
+        toFilter(m1g, m1b, opts);
+        toFilter(m2g, m2b, opts);
+        cv::compare(m1b, m2b, diff, cv::CMP_NE);
+    }
+    else
+        cv::compare(m1g, m2g, diff, cv::CMP_NE);
     return cv::countNonZero(diff);
 }
 
@@ -86,7 +109,8 @@ int main(int argc, char **argv)
     // Window properties
     cv::namedWindow(WINDOW_TITLE);
     cv::setMouseCallback(WINDOW_TITLE, onMouse, 0);
-    // Capture properties
+    cv::createTrackbar(TKB_TYPES, WINDOW_TITLE, &cmdopts.filter_type, FILTER_MAX_TYPE);
+    cv::createTrackbar(TKB_VALUE, WINDOW_TITLE, &cmdopts.filter_value, FILTER_MAX_VALUE);
     cv::VideoCapture capdev(cmdopts.deviceId);
     capdev.set(cv::CAP_PROP_FRAME_WIDTH, cmdopts.width);
     if (false == capdev.isOpened())
@@ -101,7 +125,7 @@ int main(int argc, char **argv)
         {
             frames++;
             capdev >> img;                                         // Capture image
-            diffValue = compare(imgPrev, img, imgDiff);            // Compare captures
+            diffValue = compare(imgPrev, img, imgDiff, cmdopts);   // Compare captures
             cv::imshow(WINDOW_TITLE, (diffMode) ? imgDiff : img);  // Display UI
             const std::string tsDate = Tools::Timestamp::asDate(); // Timestamp as date
             // Debug compare

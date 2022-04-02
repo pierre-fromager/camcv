@@ -29,6 +29,10 @@
 #define CMD_OPT_I_HLP "set capture interval"
 #define CMD_OPT_S "s"
 #define CMD_OPT_S_HLP "save image"
+#define CMD_OPT_FT "ft"
+#define CMD_OPT_FT_HLP "filter type"
+#define CMD_OPT_FV "fv"
+#define CMD_OPT_FV_HLP "filter value"
 
 namespace bpo = boost::program_options;
 

@@ -3,7 +3,7 @@
 
 time_t Tools::Timestamp::now()
 {
-    return time(0);
+    return time(nullptr);
 }
 
 std::string Tools::Timestamp::asNumber()

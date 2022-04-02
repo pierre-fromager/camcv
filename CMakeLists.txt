@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.2)
 
 project(camcv)
-
+set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 1)
+# Definitions
 add_definitions(
 	# -DAE_CPU=AE_INTEL -DAE_NO_AVX2 -DAE_NO_FMA 
     -O2 -Werror -Wall -Wextra -Wpedantic -std=c++17 -g 
@@ -18,7 +22,7 @@ add_definitions(
 	-D_FORTIFY_SOURCE=2 
 	-fsanitize=leak
 )
-
+# common recurse
 file(GLOB ${PROJECT_NAME}_sources 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp 

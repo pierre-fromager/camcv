@@ -37,6 +37,9 @@ for f in /dev/video*; do
     echo "$f  =>  $name"
 done
 ``` 
+## Screenshot
+
+![sc](doc/assets/screenshot.jpeg)
 
 ## Usage
 
@@ -55,6 +58,8 @@ Usage camcv [options]:
   --v arg               set verbosity
   --i arg               set capture interval
   --s arg               save image
+  --ft arg              filter type
+  --fv arg              filter value
 ```
 Sample run options
 ```
@@ -66,7 +71,7 @@ In this case we :
 * set capture dimension to 320x240
 * enable verbosity as info
 * capture every 2 frames
-* choose to save image on motion detect
+* save image on motion detect
 
 ### Keys
 * 'm' toggle diff mode.

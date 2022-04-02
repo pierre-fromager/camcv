@@ -20,5 +20,9 @@
 #define CAPTURE_LABEL "Capture"
 #define MOTION_DETECTED_LABEL "MotionWeight:"
 #define SMOTION_DETECTED_LABEL SPACE MOTION_DETECTED_LABEL
+#define TKB_TYPES "Type: \n 0: Binary \n 1: Binary Inverted \n 2: Truncate \n 3: To Zero \n 4: To Zero Inverted"
+#define TKB_VALUE "Value"
+#define FILTER_MAX_TYPE 4
+#define FILTER_MAX_VALUE 255
 
 #endif // CONFIG_H

@@ -6,6 +6,8 @@
 #define TOLERANCE 1000
 #define POLLING_CAP_INTERVAL 20
 #define SAVE_IMG_ACTION 0
+#define FILTER_TYPE 0
+#define FILTER_VALUE 0
 
 enum verbosity_t
 {
@@ -24,7 +26,8 @@ typedef struct cmd_options_s
     ui_t width = DEV_WIDTH;
     ui_t verbosity = v_info;
     ui_t savimg = SAVE_IMG_ACTION;
-
+    int filter_type = FILTER_TYPE;
+    int filter_value = FILTER_VALUE;
 } cmd_options_t;
 
 #endif
