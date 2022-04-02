@@ -8,7 +8,7 @@
  * 
  * @param cmdopts options
  */
-static void initGui(cmd_options_t cmdopts)
+static void initGui(cmd_options_t &cmdopts)
 {
     cv::namedWindow(WINDOW_TITLE);
     cv::createTrackbar(TKB_TYPES, WINDOW_TITLE, &cmdopts.filter_type, FILTER_MAX_TYPE);
