@@ -2,6 +2,8 @@
 #include <camcv/config.h>
 #include <optionsparser.h>
 #include <tools/timestamp.h>
+#include <device.h>
+#include <motion.h>
 
 /**
  * @brief init gui
@@ -17,62 +19,12 @@ static void initGui(cmd_options_t &cmdopts)
 }
 
 /**
- * @brief convert cap to gray
- *
- * @param m initial
- * @param mGray grayed
- */
-static void toGray(const cv::Mat m, cv::Mat &mGray)
-{
-    cv::cvtColor(m, mGray, cv::COLOR_RGB2GRAY);
-}
-
-/**
- * @brief filter
- *
- * @param m initial
- * @param mFilter filtered
- * @param opts
- */
-static void toFilter(const cv::Mat m, cv::Mat &mFilter, cmd_options_t opts)
-{
-    cv::threshold(m, mFilter, opts.filter_value, FILTER_MAX_VALUE, opts.filter_type);
-}
-
-/**TKB_VALUE
- * @param m2 previous img
- * @param diff diff img
- * @param opts options
- * @return int non zero diff
- */
-static int compare(const cv::Mat m1, const cv::Mat m2, cv::Mat &diff, cmd_options_t opts)
-{
-    if (m1.empty() && m2.empty())
-        return -1;
-    if (m1.cols != m2.cols || m1.rows != m2.rows || m1.dims != m2.dims)
-        return -2;
-    cv::Mat m1g, m2g;
-    toGray(m1, m1g);
-    toGray(m2, m2g);
-    if (opts.filter_type + opts.filter_value != 0)
-    {
-        cv::Mat m1b, m2b;
-        toFilter(m1g, m1b, opts);
-        toFilter(m2g, m2b, opts);
-        cv::compare(m1b, m2b, diff, cv::CMP_NE);
-    }
-    else
-        cv::compare(m1g, m2g, diff, cv::CMP_NE);
-    return cv::countNonZero(diff);
-}
-
-/**
  * @brief trigger action when threshold outmoded
  *
  * @param img current capture
  * @param opts options parser results
  */
-static void action(const cv::Mat img, int deltaDiff, int frames, cmd_options_t opts)
+static void action(const cv::Mat img, int deltaDiff, int frames, const cmd_options_t opts)
 {
     const std::string ts = Tools::Timestamp::asNumber();
     if (opts.verbosity <= v_info)
@@ -81,6 +33,7 @@ static void action(const cv::Mat img, int deltaDiff, int frames, cmd_options_t o
     {
         char filename[21];
         sprintf(filename, "%s%02d%s", ts.c_str(), frames, JPEG_EXT);
+        cv::putText(img, ts, cv::Point(10, 10), cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0, 255, 0), 2);
         cv::imwrite(filename, img);
     }
 }
@@ -107,34 +60,38 @@ int main(int argc, char **argv)
     int frames = 0;
     int diffValue, diffPrev = 0;
     bool diffMode = false;
-    cv::Mat img, imgPrev, imgDiff; // Matrices
-    if (cmdopts.gui)               // Gui properties
+    cv::Mat img;     // Captured image
+    if (cmdopts.gui) // Gui
         initGui(cmdopts);
-    cv::VideoCapture capdev(cmdopts.deviceId);
-    capdev.set(cv::CAP_PROP_FRAME_WIDTH, cmdopts.width);
-    if (false == capdev.isOpened())
+    auto *dev = new Device(cmdopts.deviceId);
+    dev->setProp(cv::CAP_PROP_FRAME_WIDTH, cmdopts.width);
+    if (false == dev->ready())
     {
         std::cout << ERR_MSG << std::endl;
         return EXIT_FAILURE;
     }
     else
     {
-        capdev >> imgPrev;
-        while (capdev.isOpened())
+        auto motion = new Motion();
+        dev->capture(img);
+        motion->setFrame(img);
+        motion->setFramePrevious();
+        while (dev->ready())
         {
             frames++;
             if (frames > MAX_FRAMES)
                 frames = 0;
-            capdev >> img;                                       // Capture image
-            diffValue = compare(imgPrev, img, imgDiff, cmdopts); // Compare captures
-            if (cmdopts.gui)                                     // Display GUI img
-                cv::imshow(WINDOW_TITLE, (diffMode) ? imgDiff : img);
+            dev->capture(img);
+            motion->setOptions(cmdopts);  // Capture
+            diffValue = motion->detect(); // Compare
+            if (cmdopts.gui)              // Display GUI img
+                cv::imshow(WINDOW_TITLE, (diffMode) ? motion->getDiffFrame() : img);
             if (frames % cmdopts.cintval == 0) // check diff
             {
+                motion->setFramePrevious();
                 const int deltaDiff = abs(diffPrev - diffValue);
                 if (deltaDiff > cmdopts.threshold)
                     action(img, deltaDiff, frames, cmdopts);
-                capdev >> imgPrev;
             }
             else
                 diffPrev = diffValue;
@@ -151,6 +108,8 @@ int main(int argc, char **argv)
                 }
             }
         }
+        delete motion;
     }
+    delete dev;
     return EXIT_SUCCESS;
 }

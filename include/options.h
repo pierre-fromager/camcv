@@ -33,4 +33,4 @@ typedef struct cmd_options_s
     ui_t gui = USE_GUI;
 } cmd_options_t;
 
-#endif
+#endif // OPTIONS_H

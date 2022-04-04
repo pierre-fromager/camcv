@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <string>
-#include <opencv4/opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #define MAIN_MSG "Press ESC to exit"
 #define WINDOW_TITLE "Motion detect"
@@ -27,5 +27,8 @@
 #define FILTER_MAX_TYPE 4
 #define FILTER_MAX_VALUE 255
 #define MAX_FRAMES 99
+#define CAP_FPS 10.0
+#define CAP_CODEC 0x47504A4D // MJPG
+#define CAP_EXPOSURE -6      // [-0..-13]
 
 #endif // CONFIG_H

@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.2)
 
 project(camcv)
-set(CMAKE_BUILD_TYPE Debug)
-#set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
 # Definitions
 add_definitions(
 	# -DAE_CPU=AE_INTEL -DAE_NO_AVX2 -DAE_NO_FMA 
-    -O2 -Werror -Wall -Wextra -Wpedantic -std=c++17 -g 
+    -O2 -Werror -Wall -Wextra -Wpedantic -std=c++17 -s 
 	-Wno-unused-function -Wno-unused-parameter -Wno-unused-variable 
 	-Wno-format-nonliteral -Wcast-qual -Wno-strict-aliasing 
 	-Wformat=2 -Wformat-security 
@@ -22,6 +22,8 @@ add_definitions(
 	-D_FORTIFY_SOURCE=2 
 	-fsanitize=leak
 )
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+add_link_options($<$<CONFIG:RELEASE>:-s>)
 # common recurse
 file(GLOB ${PROJECT_NAME}_sources 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
@@ -31,7 +33,7 @@ file(GLOB ${PROJECT_NAME}_sources
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(/usr/include/opencv4)
 
-add_definitions (-DBOOST_TEST_DYN_LINK)
+add_definitions (-DBOOST_TEST_DYN_LINK -DWITH_CUDA=OFF -DWITH_OPENCL=OFF -DWITH_IPP=OFF)
 
 find_package(Boost COMPONENTS system filesystem program_options REQUIRED)
 find_package(OpenCV REQUIRED)

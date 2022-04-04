@@ -86,7 +86,7 @@ Check Cpu load
 top -c -p $(pgrep -d',' -f camcv)
 ```
 
-* On i5-3320M, 320x240, filter activated, load is 2.7% per instance
+* On i5-3320M, 320x240, filter activated, without gui, load is 2.7% per instance
 * Consider file saving as greedy
 
 ## Looking further
