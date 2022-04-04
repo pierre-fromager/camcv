@@ -39,24 +39,29 @@ static void action(const cv::Mat img, int deltaDiff, int frames, const cmd_optio
     }
 }
 
-int main(int argc, char **argv)
+static int parseOptions(int argc, char **argv, cmd_options_t &cmdopts)
 {
-    cmd_options_t cmdopts;
     ui_t rcopt;
     try
     {
-        auto *op = new OptionsParser(argc, argv);
-        rcopt = op->parse(cmdopts);
+        auto *opParser = new OptionsParser(argc, argv);
+        rcopt = opParser->parse(cmdopts);
         if (cmdopts.verbosity == v_debug)
-            op->debug(cmdopts);
-        delete op;
+            opParser->debug(cmdopts);
+        delete opParser;
     }
     catch (const bpo::error &ex)
     {
         std::cerr << ex.what() << std::endl;
         return EXIT_FAILURE;
     }
-    if (rcopt == EXIT_FAILURE)
+    return rcopt;
+}
+
+int main(int argc, char **argv)
+{
+    cmd_options_t cmdopts;
+    if (parseOptions(argc, argv, cmdopts) == EXIT_FAILURE)
         return EXIT_FAILURE;
     int frames = 0;
     int diffValue, diffPrev = 0;
@@ -71,46 +76,44 @@ int main(int argc, char **argv)
         std::cout << ERR_MSG << std::endl;
         return EXIT_FAILURE;
     }
-    else
+    auto motion = new Motion();
+    dev->capture(img);
+    motion->setFrame(img);
+    motion->setFramePrevious();
+    while (dev->ready())
     {
-        auto motion = new Motion();
+        frames++;
+        if (frames > MAX_FRAMES)
+            frames = 0;
         dev->capture(img);
-        motion->setFrame(img);
-        motion->setFramePrevious();
-        while (dev->ready())
+        motion->setOptions(cmdopts);  // Capture
+        diffValue = motion->detect(); // Compare
+        if (cmdopts.gui)              // Display GUI img
+            cv::imshow(WINDOW_TITLE, (diffMode) ? motion->getDiffFrame()
+                                                : motion->getCurrentFrame());
+        if (frames % cmdopts.cintval == 0) // check diff
         {
-            frames++;
-            if (frames > MAX_FRAMES)
-                frames = 0;
-            dev->capture(img);
-            motion->setOptions(cmdopts);  // Capture
-            diffValue = motion->detect(); // Compare
-            if (cmdopts.gui)              // Display GUI img
-                cv::imshow(WINDOW_TITLE, (diffMode) ? motion->getDiffFrame() : img);
-            if (frames % cmdopts.cintval == 0) // check diff
+            motion->setFramePrevious();
+            const int deltaDiff = abs(diffPrev - diffValue);
+            if (deltaDiff > cmdopts.threshold)
+                action(img, deltaDiff, frames, cmdopts);
+        }
+        else
+            diffPrev = diffValue;
+        if (cmdopts.gui) // Keys management
+        {
+            const int kv = cv::waitKey(POLLING_KEY_TIME);
+            if (kv == ESC_CODE)
+                break;
+            switch (kv)
             {
-                motion->setFramePrevious();
-                const int deltaDiff = abs(diffPrev - diffValue);
-                if (deltaDiff > cmdopts.threshold)
-                    action(img, deltaDiff, frames, cmdopts);
-            }
-            else
-                diffPrev = diffValue;
-            if (cmdopts.gui) // Keys management
-            {
-                const int kv = cv::waitKey(POLLING_KEY_TIME);
-                if (kv == ESC_CODE)
-                    break;
-                switch (kv)
-                {
-                case KEY_MODE:
-                    diffMode = !diffMode;
-                    break;
-                }
+            case KEY_MODE:
+                diffMode = !diffMode;
+                break;
             }
         }
-        delete motion;
     }
+    delete motion;
     delete dev;
     return EXIT_SUCCESS;
 }
