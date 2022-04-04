@@ -31,10 +31,11 @@ static void action(const cv::Mat img, int deltaDiff, int frames, const cmd_optio
         std::cout << MOTIONAT_MSG << ts << "@" << frames << ":" << deltaDiff << std::endl;
     if (opts.savimg)
     {
-        char filename[21];
-        sprintf(filename, "%s%02d%s", ts.c_str(), frames, JPEG_EXT);
-        cv::putText(img, ts, cv::Point(10, 10), cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0, 255, 0), 2);
-        cv::imwrite(filename, img);
+        char tsframe[21];
+        const std::string ext = JPEG_EXT;
+        sprintf(tsframe, "%s%02d", ts.c_str(), frames);
+        cv::putText(img, tsframe, cv::Point(10, 10), cv::FONT_HERSHEY_PLAIN, 0.5, cv::Scalar(0, 0, 255), 1);
+        cv::imwrite(tsframe + ext, img);
     }
 }
 
