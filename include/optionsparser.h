@@ -41,7 +41,7 @@ namespace bpo = boost::program_options;
 class OptionsParser
 {
 public:
-    explicit OptionsParser(int argc, char **argv);
+    explicit OptionsParser(const int argc, char **argv);
     ~OptionsParser();
     ui_t parse(cmd_options_t &cmdopts);
     void debug(cmd_options_t &cmdopts);

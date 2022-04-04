@@ -30,5 +30,6 @@
 #define CAP_FPS 10.0
 #define CAP_CODEC 0x47504A4D // MJPG
 #define CAP_EXPOSURE -6      // [-0..-13]
+#define ACTION_TSFRAME_SIZE 30
 
 #endif // CONFIG_H

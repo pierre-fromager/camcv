@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.2)
 
 project(camcv)
-#set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
 # Definitions
@@ -22,7 +22,7 @@ add_definitions(
 	-D_FORTIFY_SOURCE=2 
 	-fsanitize=leak
 )
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
 add_link_options($<$<CONFIG:RELEASE>:-s>)
 # common recurse
 file(GLOB ${PROJECT_NAME}_sources 

@@ -3,7 +3,7 @@
 
 namespace bpo = boost::program_options;
 
-OptionsParser::OptionsParser(int argc, char **argv) : m_argc(argc), m_argv(argv)
+OptionsParser::OptionsParser(const int argc, char **argv) : m_argc(argc), m_argv(argv)
 {
 }
 

@@ -24,14 +24,14 @@ static void initGui(cmd_options_t &cmdopts)
  * @param img current capture
  * @param opts options parser results
  */
-static void action(const cv::Mat img, int deltaDiff, int frames, const cmd_options_t opts)
+static void action(const cv::Mat img, const int deltaDiff, const int frames, const cmd_options_t opts)
 {
     const std::string ts = Tools::Timestamp::asNumber();
     if (opts.verbosity <= v_info)
         std::cout << MOTIONAT_MSG << ts << "@" << frames << ":" << deltaDiff << std::endl;
     if (opts.savimg)
     {
-        char tsframe[21];
+        char tsframe[ACTION_TSFRAME_SIZE];
         const std::string ext = JPEG_EXT;
         sprintf(tsframe, "%s%02d", ts.c_str(), frames);
         cv::putText(img, tsframe, cv::Point(10, 10), cv::FONT_HERSHEY_PLAIN, 0.5, cv::Scalar(0, 0, 255), 1);
@@ -63,8 +63,7 @@ int main(int argc, char **argv)
     cmd_options_t cmdopts;
     if (parseOptions(argc, argv, cmdopts) == EXIT_FAILURE)
         return EXIT_FAILURE;
-    int frames = 0;
-    int diffValue, diffPrev = 0;
+    int frames, diffValue, diffPrev = 0;
     bool diffMode = false;
     cv::Mat img;     // Captured image
     if (cmdopts.gui) // Gui
