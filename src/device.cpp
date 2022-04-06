@@ -1,7 +1,7 @@
 
 #include <device.h>
 
-Device::Device(int deviceId) : m_deviceId(deviceId)
+Device::Device(int deviceId, Logger *logger) : m_deviceId(deviceId), m_logger(logger)
 {
     m_device.open(deviceId);
 }
@@ -33,6 +33,7 @@ bool Device::setProp(int propId, double val)
     // capdev.set(cv::CAP_PROP_FPS, CAP_FPS);
     // capdev.set(cv::CAP_PROP_FOURCC, CAP_CODEC);
     // capdev.set(cv::CAP_PROP_EXPOSURE, CAP_EXPOSURE);
+    m_logger->logDebug("Device set propertie : " + propId);
     return m_device.set(propId, val);
 }
 
@@ -43,5 +44,6 @@ bool Device::ready()
 
 void Device::capture(cv::Mat &img)
 {
+    m_logger->logDebug("Device capture");
     m_device >> img;
 }

@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 #include <string>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/directory.hpp>
 #include <opencv2/opencv.hpp>
 
 #define MAIN_MSG "Press ESC to exit"
@@ -31,5 +33,8 @@
 #define CAP_CODEC 0x47504A4D // MJPG
 #define CAP_EXPOSURE -6      // [-0..-13]
 #define ACTION_TSFRAME_SIZE 30
+#define LOGGER_PATH "camcv.log"
+#define MSG_CAP_FOLDER_SUCCESS "Capture folder created: "
+#define MSG_CAP_FOLDER_FAIL "Fail to create: "
 
 #endif // CONFIG_H

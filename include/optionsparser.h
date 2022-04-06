@@ -35,6 +35,8 @@
 #define CMD_OPT_FV_HLP "filter value"
 #define CMD_OPT_GUI "gui"
 #define CMD_OPT_GUI_HLP "use GUI"
+#define CMD_OPT_CAP "cap"
+#define CMD_OPT_CAP_HLP "capture Path"
 
 namespace bpo = boost::program_options;
 

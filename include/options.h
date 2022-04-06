@@ -9,14 +9,9 @@
 #define FILTER_TYPE 0
 #define FILTER_VALUE 0
 #define USE_GUI 1
+#define CAPTURE_PATH "./capture/"
 
-enum verbosity_t
-{
-    v_debug = 0,
-    v_info = 1,
-    v_warn = 2,
-    v_error = 3
-};
+#include <verbosity.h>
 
 typedef unsigned int ui_t;
 typedef unsigned long int uli_t;
@@ -31,6 +26,7 @@ typedef struct cmd_options_s
     int filter_type = FILTER_TYPE;
     int filter_value = FILTER_VALUE;
     ui_t gui = USE_GUI;
+    std::string cappath = CAPTURE_PATH;
 } cmd_options_t;
 
 #endif // OPTIONS_H

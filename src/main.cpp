@@ -2,6 +2,7 @@
 #include <camcv/config.h>
 #include <optionsparser.h>
 #include <tools/timestamp.h>
+#include <logger.h>
 #include <device.h>
 #include <motion.h>
 
@@ -21,14 +22,18 @@ static void initGui(cmd_options_t &cmdopts)
 /**
  * @brief trigger action when threshold outmoded
  *
- * @param img current capture
- * @param opts options parser results
+ * @param img current capture filename
+ * @param deltaDiff motion weight
+ * @param frames frame number
+ * @param opts options
+ * @param logger
  */
-static void action(const cv::Mat img, const int deltaDiff, const int frames, const cmd_options_t opts)
+static void action(const cv::Mat img, const int deltaDiff, const int frames, const cmd_options_t opts, Logger *logger)
 {
     const std::string ts = Tools::Timestamp::asNumber();
-    if (opts.verbosity <= v_info)
-        std::cout << MOTIONAT_MSG << ts << "@" << frames << ":" << deltaDiff << std::endl;
+    std::ostringstream actionMsg;
+    actionMsg << MOTIONAT_MSG << ts << "@" << frames << ":" << deltaDiff;
+    logger->logInfo(actionMsg.str());
     if (opts.savimg)
     {
         char tsframe[ACTION_TSFRAME_SIZE];
@@ -58,21 +63,34 @@ static int parseOptions(int argc, char **argv, cmd_options_t &cmdopts)
     return rcopt;
 }
 
+static void checkFolders(cmd_options_t opts, Logger *logger)
+{
+    const char *path = opts.cappath.c_str();
+    namespace fs = boost::filesystem;
+    fs::path dir(path);
+    if (fs::create_directory(dir))
+        logger->logDebug(MSG_CAP_FOLDER_SUCCESS + opts.cappath);
+    else
+        logger->logErr(MSG_CAP_FOLDER_FAIL + opts.cappath);
+}
+
 int main(int argc, char **argv)
 {
     cmd_options_t cmdopts;
     if (parseOptions(argc, argv, cmdopts) == EXIT_FAILURE)
         return EXIT_FAILURE;
+    auto logger = new Logger(LOGGER_PATH, cmdopts.verbosity);
+    checkFolders(cmdopts, logger);
     int frames, diffValue, diffPrev = 0;
     bool diffMode = false;
     cv::Mat img;     // Captured image
     if (cmdopts.gui) // Gui
         initGui(cmdopts);
-    auto *dev = new Device(cmdopts.deviceId);
+    auto *dev = new Device(cmdopts.deviceId, logger);
     dev->setProp(cv::CAP_PROP_FRAME_WIDTH, cmdopts.width);
     if (false == dev->ready())
     {
-        std::cout << ERR_MSG << std::endl;
+        logger->logErr(ERR_MSG);
         return EXIT_FAILURE;
     }
     auto motion = new Motion();
@@ -95,7 +113,7 @@ int main(int argc, char **argv)
             motion->setFramePrevious();
             const int deltaDiff = abs(diffPrev - diffValue);
             if (deltaDiff > cmdopts.threshold)
-                action(img, deltaDiff, frames, cmdopts);
+                action(img, deltaDiff, frames, cmdopts, logger);
         }
         else
             diffPrev = diffValue;
@@ -114,5 +132,6 @@ int main(int argc, char **argv)
     }
     delete motion;
     delete dev;
+    delete logger;
     return EXIT_SUCCESS;
 }

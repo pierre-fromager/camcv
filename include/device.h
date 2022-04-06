@@ -1,6 +1,7 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 #include <camcv/config.h>
+#include <logger.h>
 
 typedef struct device_capability_s
 {
@@ -21,7 +22,7 @@ class Device
 {
 
 public:
-    explicit Device(int deviceId);
+    explicit Device(int deviceId,Logger *logger);
     ~Device();
     device_capability_t properties();
     bool setProp(int propId, double val);
@@ -31,6 +32,7 @@ public:
 private:
     cv::VideoCapture m_device;
     int m_deviceId;
+    Logger *m_logger = nullptr;
     device_capability_t m_properties;
 };
 
