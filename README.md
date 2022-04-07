@@ -90,6 +90,13 @@ top -c -p $(pgrep -d',' -f camcv)
 * On i5-3320M, 320x240, filter activated, without gui, load is 2.7% per instance
 * Consider file saving as greedy (+2% cpu load)
 
+## Capture consolidate
+You can use ffmpeg to consolidate all capture files into a single movie.
+
+```
+ffmpeg -framerate 10 -pattern_type glob -i '*.jpg' -c:v libx264 -pix_fmt yuv420p consolidate.mp4
+```
+
 ## Looking further
 * Zoning [there](https://github.com/cedricve/motion-detection)
 * [OpenCV](https://github.com/joachimBurket/esp32-opencv) on esp32
