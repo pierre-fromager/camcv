@@ -6,6 +6,17 @@
 #include <device.h>
 #include <motion.h>
 
+namespace fs = boost::filesystem;
+static void initGui(cmd_options_t &cmdopts);
+static void action(
+    const cv::Mat img,
+    const int deltaDiff,
+    const int frames,
+    const cmd_options_t opts,
+    Logger *logger);
+static int parseOptions(int argc, char **argv, cmd_options_t &cmdopts);
+static void checkFolder(std::string dirpath, Logger *logger);
+
 /**
  * @brief init gui
  *
@@ -28,7 +39,12 @@ static void initGui(cmd_options_t &cmdopts)
  * @param opts options
  * @param logger
  */
-static void action(const cv::Mat img, const int deltaDiff, const int frames, const cmd_options_t opts, Logger *logger)
+static void action(
+    const cv::Mat img,
+    const int deltaDiff,
+    const int frames,
+    const cmd_options_t opts,
+    Logger *logger)
 {
     const std::string ts = Tools::Timestamp::asNumber();
     std::ostringstream actionMsg;
@@ -36,11 +52,18 @@ static void action(const cv::Mat img, const int deltaDiff, const int frames, con
     logger->logInfo(actionMsg.str());
     if (opts.savimg)
     {
+        fs::path full_path(fs::current_path());
+        checkFolder(full_path.string() + SLASH + opts.cappath + SLASH + ts.substr(0, 8), logger);
         char tsframe[ACTION_TSFRAME_SIZE];
-        const std::string ext = JPEG_EXT;
+        actionMsg.str("");
+        actionMsg.clear();
         sprintf(tsframe, "%s%02d", ts.c_str(), frames);
+        actionMsg << MSG_SAVING_ACTION << tsframe << JPEG_EXT;
+        logger->logDebug(actionMsg.str());
         cv::putText(img, tsframe, cv::Point(10, 10), cv::FONT_HERSHEY_PLAIN, 0.5, cv::Scalar(0, 0, 255), 1);
-        cv::imwrite(tsframe + ext, img);
+        const std::string absFilename = full_path.string() + SLASH + opts.cappath + SLASH + ts.substr(0, 8) + SLASH + tsframe + JPEG_EXT;
+        logger->logInfo(SAVING_TO + absFilename);
+        cv::imwrite(absFilename, img);
     }
 }
 
@@ -63,15 +86,17 @@ static int parseOptions(int argc, char **argv, cmd_options_t &cmdopts)
     return rcopt;
 }
 
-static void checkFolders(cmd_options_t opts, Logger *logger)
+static void checkFolder(std::string dirpath, Logger *logger)
 {
-    const char *path = opts.cappath.c_str();
-    namespace fs = boost::filesystem;
+    const char *path = dirpath.c_str();
     fs::path dir(path);
-    if (fs::create_directory(dir))
-        logger->logDebug(MSG_CAP_FOLDER_SUCCESS + opts.cappath);
-    else
-        logger->logErr(MSG_CAP_FOLDER_FAIL + opts.cappath);
+    if (false == fs::exists(dir))
+    {
+        if (fs::create_directory(dir))
+            logger->logDebug(MSG_CAP_FOLDER_SUCCESS + dirpath);
+        else
+            logger->logErr(MSG_CAP_FOLDER_FAIL + dirpath);
+    }
 }
 
 int main(int argc, char **argv)
@@ -80,7 +105,7 @@ int main(int argc, char **argv)
     if (parseOptions(argc, argv, cmdopts) == EXIT_FAILURE)
         return EXIT_FAILURE;
     auto logger = new Logger(LOGGER_PATH, cmdopts.verbosity);
-    checkFolders(cmdopts, logger);
+    checkFolder(cmdopts.cappath, logger);
     int frames, diffValue, diffPrev = 0;
     bool diffMode = false;
     cv::Mat img;     // Captured image

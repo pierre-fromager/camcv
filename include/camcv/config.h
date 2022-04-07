@@ -36,5 +36,8 @@
 #define LOGGER_PATH "camcv.log"
 #define MSG_CAP_FOLDER_SUCCESS "Capture folder created: "
 #define MSG_CAP_FOLDER_FAIL "Fail to create: "
+#define MSG_SAVING_ACTION "Saving jpeg filename : "
+#define SLASH "/"
+#define SAVING_TO "Saving to "
 
 #endif // CONFIG_H

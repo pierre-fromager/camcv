@@ -4,4 +4,7 @@ if [ -d "./build" ]; then
     rm -rf ./build
 fi
 
-rm ./*.jpg
+if [ -d "./capture" ]; then
+    rm -rf ./capture
+fi
+
