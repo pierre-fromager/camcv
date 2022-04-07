@@ -51,16 +51,17 @@ Display help
 ./build/camcv --help
 
 Usage camcv [options]:
-  --help                help options
-  --d arg               set device id
-  --t arg               set threshold
-  --w arg               set width
-  --v arg               set verbosity
-  --i arg               set capture interval
+  --help                display options
+  --d arg               device id
+  --t arg               threshold
+  --w arg               width
+  --v arg               verbosity
+  --i arg               capture interval
   --s arg               save image
   --ft arg              filter type
   --fv arg              filter value
   --gui arg             use GUI
+  --cap arg             capture Path
 ```
 Sample run options
 ```
