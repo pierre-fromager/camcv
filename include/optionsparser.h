@@ -36,7 +36,9 @@
 #define CMD_OPT_GUI "gui"
 #define CMD_OPT_GUI_HLP "use GUI"
 #define CMD_OPT_CAP "cap"
-#define CMD_OPT_CAP_HLP "capture Path"
+#define CMD_OPT_CAP_HLP "capture path"
+#define CMD_OPT_PREFIX "prefix"
+#define CMD_OPT_PREFIX_HLP "cam prefix"
 
 namespace bpo = boost::program_options;
 

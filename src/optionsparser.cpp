@@ -25,6 +25,7 @@ ui_t OptionsParser::parse(cmd_options_t &cmdopts)
     desc.add_options()(CMD_OPT_FV, bpo::value<int>(), CMD_OPT_FV_HLP);
     desc.add_options()(CMD_OPT_GUI, bpo::value<int>(), CMD_OPT_GUI_HLP);
     desc.add_options()(CMD_OPT_CAP, bpo::value<std::string>(), CMD_OPT_CAP_HLP);
+    desc.add_options()(CMD_OPT_PREFIX, bpo::value<std::string>(), CMD_OPT_PREFIX_HLP);
     bpo::variables_map vm;
     bpo::store(bpo::parse_command_line(m_argc, m_argv, desc), vm);
     bpo::notify(vm);
@@ -53,6 +54,8 @@ ui_t OptionsParser::parse(cmd_options_t &cmdopts)
         cmdopts.gui = vm[CMD_OPT_GUI].as<int>();
     if (vm.count(CMD_OPT_CAP))
         cmdopts.cappath = vm[CMD_OPT_CAP].as<std::string>();
+    if (vm.count(CMD_OPT_PREFIX))
+        cmdopts.cappath = vm[CMD_OPT_PREFIX].as<std::string>();
     return EXIT_SUCCESS;
 }
 
@@ -68,5 +71,6 @@ void OptionsParser::debug(cmd_options_t &cmdopts)
               << " Filter value:" << cmdopts.filter_value
               << " Use GUI:" << cmdopts.gui
               << " Capture path:" << cmdopts.cappath
+              << " Cam prefix:" << cmdopts.prefix
               << std::endl;
 }

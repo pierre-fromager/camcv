@@ -61,7 +61,7 @@ static void action(
         actionMsg << MSG_SAVING_ACTION << tsframe << JPEG_EXT;
         logger->logDebug(actionMsg.str());
         cv::putText(img, tsframe, cv::Point(10, 10), cv::FONT_HERSHEY_PLAIN, 0.5, cv::Scalar(0, 0, 255), 1);
-        const std::string absFilename = full_path.string() + SLASH + opts.cappath + SLASH + ts.substr(0, 8) + SLASH + tsframe + JPEG_EXT;
+        const std::string absFilename = full_path.string() + SLASH + opts.cappath + SLASH + ts.substr(0, 8) + SLASH + opts.prefix + tsframe + JPEG_EXT;
         logger->logInfo(SAVING_TO + absFilename);
         cv::imwrite(absFilename, img);
     }

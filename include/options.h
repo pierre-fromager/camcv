@@ -10,6 +10,7 @@
 #define FILTER_VALUE 0
 #define USE_GUI 1
 #define CAPTURE_PATH "./capture/"
+#define CAM_PREFIX "cam0_"
 
 #include <verbosity.h>
 
@@ -27,6 +28,7 @@ typedef struct cmd_options_s
     int filter_value = FILTER_VALUE;
     ui_t gui = USE_GUI;
     std::string cappath = CAPTURE_PATH;
+    std::string prefix = CAM_PREFIX;
 } cmd_options_t;
 
 #endif // OPTIONS_H
